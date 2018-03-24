@@ -1,7 +1,6 @@
 #!/bin/bash
 # Prerequs: must have aws.tf, must have access and secret key in
 #           terraform.tfvars
-# TODO: Change instances of 'helloworld-key' to 'tor-key'
 
 # Install openssl, ansible, and wget
 apt-get install openssl ansible wget -y
@@ -15,9 +14,13 @@ rm terraform_0.11.3_linux_amd64.zip
 
 # Generate key pair
 ssh-keygen -f tor-key -b 4092 -t rsa -q -N ""
+PUB_KEY=$(cat tor-key.pub)
 
 # Add it to the terraform configuration file
-sed -i -e 's/public_key = ""/public_key = "'$(cat tor-key)'"/g' aws.tf
+sed -i -e 's|public_key = \"\"|public_key = '\""$PUB_KEY"\"'|' aws.tf
+
+# Add the private ssh key to the authorized keys
+echo "$PUB_KEY" >> ~/.ssh/authorized_keys
 
 # Download the terraform aws module
 ./terraform init
