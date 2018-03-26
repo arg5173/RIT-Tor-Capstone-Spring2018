@@ -2,8 +2,8 @@
 # Prerequs: must have aws.tf, must have access and secret key in
 #           terraform.tfvars
 
-# Install openssl, ansible, and wget
-apt-get install openssl ansible wget -y
+# Install openssl and wget
+apt-get install openssl wget -y
 
 # Grab terraform from their website
 if [ ! -f 'terraform' ]
