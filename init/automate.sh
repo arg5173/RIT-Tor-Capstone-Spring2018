@@ -6,12 +6,13 @@
 apt-get install openssl ansible wget -y
 
 # Grab terraform from their website
-if ![-f terraform]
+if [ ! -f 'terraform' ]
 then
     wget https://releases.hashicorp.com/terraform/0.11.3/terraform_0.11.3_linux_amd64.zip
     # Extract it
     unzip terraform_0.11.3_linux_amd64.zip
     rm terraform_0.11.3_linux_amd64.zip
+
 fi
 
 # Generate key pair
