@@ -267,7 +267,7 @@ fi
 if [ $ROLE == "HS" ]; then
 
 	echo "[!] Setting role to Hidden Service"
-	sudo apt-get install apache2
+	sudo apt-get install -y apache2 
 	# Adding HiddenServiceDir to torrc will be located at /var/lib/tor/hs
 	echo -e "HiddenServiceDir ${TOR_DIR}/hs" >> /etc/tor/torrc
 	TOR_HS_PORT=80
