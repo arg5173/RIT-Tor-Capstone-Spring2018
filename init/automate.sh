@@ -1,25 +1,29 @@
 #!/bin/bash
-# Prerequs: must have aws.tf, must have access and secret key in
-#           terraform.tfvars
+#
+# Main executible for setting up private Tor network on AWS
+#
+# Prerequisites: openssl for keygen
+# 				terraform.exe in local directory 
+#				AWS Access and Secret Key need to be in terraform.tfvars
+#	
+#########
 
-# Install openssl and wget
-apt-get install openssl wget -y
+# Generate key pair
+read -p "Generate new key pair? :" yn
+case $yn in
+	[Yy]* ) ssh-keygen -f tor-key -b 4092 -t rsa -q -N ""; PUB_KEY=$(cat tor-key.pub);;
+	[Nn]* ) echo "No key generated";;
+esac
 
-# Grab terraform from their website
 if [ ! -f 'terraform' ]
 then
     wget https://releases.hashicorp.com/terraform/0.11.3/terraform_0.11.3_linux_amd64.zip
     # Extract it
     unzip terraform_0.11.3_linux_amd64.zip
     rm terraform_0.11.3_linux_amd64.zip
-
 fi
 
-# Generate key pair
-ssh-keygen -f tor-key -b 4092 -t rsa -q -N ""
-PUB_KEY=$(cat tor-key.pub)
-
-# Add it to the terraform configuration file
+# Add our key to the main Terraform configuration file
 sed -i -e 's|public_key = \"\"|public_key = '\""$PUB_KEY"\"'|' aws.tf
 
 # Add the private ssh key to the authorized keys
@@ -27,4 +31,7 @@ echo "$PUB_KEY" >> ~/.ssh/authorized_keys
 
 # Download the terraform aws module
 ./terraform init
-./terraform apply -auto-approve
+
+# Plan and prepare to apply
+# User must enter "yes" for apply to go through
+./terraform apply
