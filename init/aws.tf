@@ -29,6 +29,11 @@ resource "aws_instance" "utility" {
         ]
     }
 
+	timeouts {
+		create = "60m"
+		delete = "30m"
+	}
+	
     connection {
         type = "ssh"
         user = "admin"
@@ -59,6 +64,11 @@ resource "aws_instance" "relay" {
           "sudo ./deploy.sh RELAY ${aws_instance.utility.public_ip}"
         ]
     }
+	
+	timeouts {
+		create = "60m"
+		delete = "30m"
+	}
 
     connection {
         type = "ssh"
