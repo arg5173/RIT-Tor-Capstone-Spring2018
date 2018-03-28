@@ -3,7 +3,7 @@
 #           terraform.tfvars
 
 # Install openssl and wget
-apt-get install openssl wget -y
+apt-get install -y openssl wget
 
 # Grab terraform from their website
 if [ ! -f 'terraform' ]
