@@ -45,7 +45,7 @@ resource "aws_instance" "relay" {
     ami = "ami-628ad918"  # Debain strech - 64 bit
     instance_type = "t2.micro"
     key_name = "${aws_key_pair.tor-key.key_name}"
-    
+	count = 3
     tags {
         Name = "Tor Relay Node"
     }
@@ -81,7 +81,7 @@ resource "aws_instance" "client" {
     ami = "ami-628ad918"  # Debain strech - 64 bit
     instance_type = "t2.micro"
     key_name = "${aws_key_pair.tor-key.key_name}"
-    
+    count = 3
     tags {
         Name = "Tor Client"
     }
@@ -153,7 +153,7 @@ resource "aws_instance" "exit" {
     ami = "ami-628ad918"  # Debain strech - 64 bit
     instance_type = "t2.micro"
     key_name = "${aws_key_pair.tor-key.key_name}"
-    
+    count = 3
     tags {
         Name = "Tor Exit Node"
     }
@@ -176,7 +176,6 @@ resource "aws_instance" "exit" {
 	timeouts {
 		create = "60m"
 		delete = "30m"
-		delete = "30m"
 	}
 
     connection {
@@ -190,7 +189,7 @@ resource "aws_instance" "da" {
     ami = "ami-628ad918"  # Debain strech - 64 bit
     instance_type = "t2.micro"
     key_name = "${aws_key_pair.tor-key.key_name}"
-    
+    count = 2
     tags {
         Name = "Tor Directory Authority"
     }
