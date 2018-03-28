@@ -6,7 +6,7 @@
 Following up on work done by: https://github.com/98Giraffe/RIT_Capstone_2016
 
 
-Team:
+#### Team:
 
 Thomas Daniels
 
@@ -17,8 +17,7 @@ Andrew Gunkle
 Matthew Willig
 
 
-
-Faculity Advisors:
+#### Faculity Advisors:
 
 Daryl Johnson
 
