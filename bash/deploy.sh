@@ -205,7 +205,7 @@ if [ $ROLE == "DA" ]; then
 	echo $TORRC >> tmp
 	scp -i "/home/admin/tor-key" -o StrictHostKeyChecking=no tmp admin@${UTIL_SERVER}:/home/admin/tmp
 	rm tmp
-	ssh -i "/home/admin/tor-key" -o StrictHostKeyChecking=no tmp admin@${UTIL_SERVER} "cat /home/admin/tmp >> /home/tor/DAs && rm /home/admin/tmp"
+	ssh -i "/home/admin/tor-key" -o StrictHostKeyChecking=no admin@${UTIL_SERVER} "cat /home/admin/tmp >> /home/tor/DAs && rm /home/admin/tmp"
 	# echo $TORRC | sshpass -p "wordpass" ssh -oStrictHostKeyChecking=no tor@$UTIL_SERVER "cat >> ~/DAs"
 	
 	chown debian-tor -R /var/lib/tor
