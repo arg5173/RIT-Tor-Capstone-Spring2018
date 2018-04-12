@@ -27,3 +27,4 @@ echo "$PUB_KEY" >> ~/.ssh/authorized_keys
 
 # Download the terraform aws module
 ./terraform init
+./terraform apply
