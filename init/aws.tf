@@ -1,5 +1,6 @@
 # Terraform script
 
+# Get the keys from the terraform.tfvars file
 variable "AWS_ACCESS_KEY" {}
 variable "AWS_SECRET_KEY" {}
 
@@ -10,7 +11,7 @@ provider "aws" {
     secret_key = "${var.AWS_SECRET_KEY}"
 }
 
-# Set up the kind of EC2 instance we want
+# Create the utility server
 resource "aws_instance" "utility" {
     ami = "ami-628ad918"  # Debain strech - 64 bit
     instance_type = "t2.micro"
@@ -20,6 +21,7 @@ resource "aws_instance" "utility" {
         Name = "Tor Utility Server"
     }
 
+    # Set up the utility server
     provisioner "remote-exec" {
         inline = [
           "sudo apt-get install wget -y",
@@ -34,6 +36,7 @@ resource "aws_instance" "utility" {
 		delete = "30m"
 	}
 	
+    # Connect to the instance to set it up using our private key
     connection {
         type = "ssh"
         user = "admin"
@@ -41,20 +44,23 @@ resource "aws_instance" "utility" {
     }
 }
 
+# Create the relay node
 resource "aws_instance" "relay" {
     ami = "ami-628ad918"  # Debain strech - 64 bit
     instance_type = "t2.micro"
     key_name = "${aws_key_pair.tor-key.key_name}"
-	count = 3
+	count = 3             # Create three relay nodes
     tags {
         Name = "Tor Relay Node"
     }
 
+    # Upload the key
     provisioner "file" {
         source = "tor-key"
         destination = "/home/admin/tor-key"
     }
 
+    # COnfigure the relay node
     provisioner "remote-exec" {
         inline = [
           "sudo apt-get install wget -y",
@@ -77,11 +83,12 @@ resource "aws_instance" "relay" {
     }
 }
 
+# Create the clients
 resource "aws_instance" "client" {
     ami = "ami-628ad918"  # Debain strech - 64 bit
     instance_type = "t2.micro"
     key_name = "${aws_key_pair.tor-key.key_name}"
-    count = 3
+    count = 3             # Create 3 clients
     tags {
         Name = "Tor Client"
     }
@@ -113,6 +120,7 @@ resource "aws_instance" "client" {
     }
 }
 
+# Create the hidden service
 resource "aws_instance" "hiddenservice" {
     ami = "ami-628ad918"  # Debain strech - 64 bit
     instance_type = "t2.micro"
@@ -149,6 +157,7 @@ resource "aws_instance" "hiddenservice" {
     }
 }
 
+# Create the exit nodes
 resource "aws_instance" "exit" {
     ami = "ami-628ad918"  # Debain strech - 64 bit
     instance_type = "t2.micro"
