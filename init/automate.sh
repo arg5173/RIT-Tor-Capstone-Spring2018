@@ -18,6 +18,7 @@ fi
 # Generate key pair
 ssh-keygen -f tor-key -b 4092 -t rsa -q -N ""
 PUB_KEY=$(cat tor-key.pub)
+chmod 400 tor-key
 
 # Add it to the terraform configuration file
 sed -i -e 's|public_key = \"\"|public_key = '\""$PUB_KEY"\"'|' aws.tf
