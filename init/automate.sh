@@ -3,7 +3,7 @@
 #           terraform.tfvars
 
 # Install openssl and wget
-apt-get install -y openssl wget
+# apt-get install -y openssl wget
 
 # Grab terraform from their website
 if [ ! -f 'terraform' ]
@@ -12,20 +12,26 @@ then
     # Extract it
     unzip terraform_0.11.3_linux_amd64.zip
     rm terraform_0.11.3_linux_amd64.zip
-
 fi
 
 # Generate key pair
-ssh-keygen -f tor-key -b 4092 -t rsa -q -N ""
-PUB_KEY=$(cat tor-key.pub)
-chmod 400 tor-key
+if [ ! -f 'tor-key' ]
+then
+	ssh-keygen -f tor-key -b 4092 -t rsa -q -N ""
+	PUB_KEY=$(cat tor-key.pub)
+	chmod 400 tor-key
 
-# Add it to the terraform configuration file
-sed -i -e 's|public_key = \"\"|public_key = '\""$PUB_KEY"\"'|' aws.tf
+	# Add it to the terraform configuration file
+	sed -i -e 's|public_key = \"\"|public_key = '\""$PUB_KEY"\"'|' aws.tf
+	
+	# Add the private ssh key to the authorized keys
+	echo "$PUB_KEY" >> ~/.ssh/authorized_keys
+fi
 
-# Add the private ssh key to the authorized keys
-echo "$PUB_KEY" >> ~/.ssh/authorized_keys
+# Download the terraform aws module if nterraform has not been initalized
+if [ ! -d '.terraform' ];
+then
+	./terraform init
+fi
 
-# Download the terraform aws module
-./terraform init
 ./terraform apply
