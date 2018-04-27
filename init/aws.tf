@@ -4,6 +4,13 @@
 variable "AWS_ACCESS_KEY" {}
 variable "AWS_SECRET_KEY" {}
 
+# Get the number of instances to create
+variable "relay_count" {}
+variable "exit_count" {}
+variable "client_count" {}
+variable "da_count" {}
+variable "hidden_count" {}
+
 # Set up the login information
 provider "aws" {
     region = "us-east-1"
@@ -44,12 +51,12 @@ resource "aws_instance" "utility" {
     }
 }
 
-# Create the relay node
+# Create the relay nodes
 resource "aws_instance" "relay" {
     ami = "ami-628ad918"  # Debain strech - 64 bit
     instance_type = "t2.micro"
     key_name = "${aws_key_pair.tor-key.key_name}"
-	count = 3             # Create three relay nodes
+	count = "${var.relay_count}"
     tags {
         Name = "Tor Relay Node"
     }
@@ -88,7 +95,7 @@ resource "aws_instance" "client" {
     ami = "ami-628ad918"  # Debain strech - 64 bit
     instance_type = "t2.micro"
     key_name = "${aws_key_pair.tor-key.key_name}"
-    count = 3             # Create 3 clients
+	count = "${var.client_count}"
     tags {
         Name = "Tor Client"
     }
@@ -120,12 +127,12 @@ resource "aws_instance" "client" {
     }
 }
 
-# Create the hidden service
+# Create the hidden services
 resource "aws_instance" "hiddenservice" {
     ami = "ami-628ad918"  # Debain strech - 64 bit
     instance_type = "t2.micro"
     key_name = "${aws_key_pair.tor-key.key_name}"
-    
+    count = "${var.hidden_count}"
     tags {
         Name = "Hidden Service"
     }
@@ -162,7 +169,7 @@ resource "aws_instance" "exit" {
     ami = "ami-628ad918"  # Debain strech - 64 bit
     instance_type = "t2.micro"
     key_name = "${aws_key_pair.tor-key.key_name}"
-    count = 3
+    count = "${var.exit_count}"
     tags {
         Name = "Tor Exit Node"
     }
@@ -198,7 +205,7 @@ resource "aws_instance" "da" {
     ami = "ami-628ad918"  # Debain strech - 64 bit
     instance_type = "t2.micro"
     key_name = "${aws_key_pair.tor-key.key_name}"
-    count = 2
+    count = "${var.da_count}"
     tags {
         Name = "Tor Directory Authority"
     }
@@ -229,7 +236,6 @@ resource "aws_instance" "da" {
         private_key = "${file("tor-key")}"
     }
 }
-
 
 resource "aws_key_pair" "tor-key" {
     key_name = "tor-key"
